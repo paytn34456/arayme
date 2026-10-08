@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LABME – Laboratory Management System</title>
+<meta name="description" content="LABME: equipment, borrowing, QR scanning and attendance for school laboratories.">
+<meta name="theme-color" content="#0071e3">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230071e3'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3ELM%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<noscript><style>.scr{display:none}</style></noscript>
+</head>
+<body>
+<noscript><p style="padding:24px;font-family:sans-serif">LABME needs JavaScript enabled to run.</p></noscript>
+
+<section id="login" class="scr">
+  <div class="wrap">
+    <div class="brand"><div class="mark">LM</div><h1>LABME</h1><p>Laboratory Management System</p></div>
+    <div class="card">
+      <div class="tabs">
+        <button class="tab on" data-t="li">Log In</button>
+        <button class="tab" data-t="rg">Sign Up</button>
+      </div>
+      <form id="fli" class="pnl on" autocomplete="off" novalidate>
+        <div id="ali" class="alert"></div>
+        <label>Role</label>
+        <div class="chz" id="lirole"><button type="button" data-v="student">Student</button><button type="button" data-v="employee">Employee</button><button type="button" data-v="admin">Admin</button></div>
+        <label id="lilbl">LRN / Employee Number</label>
+        <input id="liid" type="text" placeholder="Enter your LRN or Employee Number" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <label>Password</label>
+        <input id="lipw" type="password" placeholder="Enter your password" autocomplete="new-password">
+        <button class="btn p blk" type="submit">Log In</button>
+      </form>
+      <form id="frg" class="pnl" autocomplete="off" novalidate>
+        <div id="arg" class="alert"></div>
+        <label>I am a</label>
+        <div class="chz" id="rgrole"><button type="button" data-v="student">Student</button><button type="button" data-v="employee">Employee</button></div>
+        <label id="rglbl">LRN / Employee Number</label>
+        <input id="rgid" type="text" placeholder="Enter your LRN or Employee Number" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <label>Full Name</label>
+        <input id="rgname" type="text" placeholder="First and last name" autocomplete="off" autocorrect="off" spellcheck="false">
+        <label>Password</label>
+        <input id="rgpw" type="password" placeholder="At least 8 characters" autocomplete="new-password">
+        <label>Confirm password</label>
+        <input id="rgpw2" type="password" placeholder="Re-enter password" autocomplete="new-password">
+        <button class="btn p blk" type="submit">Sign Up</button>
+      </form>
+    </div>
+    <span id="syncchip" style="display:none"></span>
+  </div>
+</section>
+
+<section id="app" class="scr hidden">
+  <aside class="side">
+    <div class="sbrand"><div class="mark">LM</div><div><div class="stitle">LABME</div><div class="slab" id="slab">Computer Lab</div></div></div>
+    <nav class="nav">
+      <button data-v="dash" class="on">Dashboard</button>
+      <button data-v="equip" class="nostu">Equipment</button>
+      <button data-v="borrow" class="nostu">Borrowing</button>
+      <button data-v="att">Attendance</button>
+      <button data-v="users" class="admin">Users</button>
+      <button data-v="logs" class="admin">Logs</button>
+      <button data-v="settings" class="nostu">Settings</button>
+    </nav>
+    <div class="sfoot">
+      <div class="uchip"><div class="avatar" id="uav">?</div><div><div class="uname" id="unm">-</div><div class="urole" id="url">-</div></div></div>
+      <button class="btn o blk" id="logout">Logout</button>
+    </div>
+  </aside>
+  <main>
+    <div class="top"><div><h2 id="vt">Dashboard</h2><p id="vs">Overview</p></div>
+      <div class="tright"><span class="pill" id="rolepill"></span><select id="labsw" class="lab" aria-label="Laboratory"></select><button class="btn o mlogout" id="logout2">Logout</button></div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <div class="view on" id="v-dash">
+      <div class="grid">
+        <div class="stat g-all"><div class="sl">Total equipment</div><div class="sv" id="s1">0</div></div>
+        <div class="stat ok g-all"><div class="sl">Available</div><div class="sv" id="s2">0</div></div>
+        <div class="stat w g-all"><div class="sl">Borrowed</div><div class="sv" id="s3">0</div></div>
+        <div class="stat d g-all"><div class="sl">Damaged</div><div class="sv" id="s4">0</div></div>
+        <div class="stat g-all"><div class="sl">Students</div><div class="sv" id="s5">0</div></div>
+        <div class="stat g-all"><div class="sl">Today's attendance</div><div class="sv" id="s6">0</div></div>
+        <div class="stat only-stu"><div class="sl">Borrowed now</div><div class="sv" id="m1">0</div></div>
+        <div class="stat ok only-stu"><div class="sl">Returned</div><div class="sv" id="m2">0</div></div>
+        <div class="stat only-stu"><div class="sl">My time-ins today</div><div class="sv" id="m3">0</div></div>
+      </div>
+      <div class="dgrid">
+        <div class="pane g-all"><div class="ph"><h3>Equipment availability</h3><span class="big" id="avpct">0%</span></div><div class="pb"><div class="bar"><i class="a" id="bara"></i><i class="b" id="barb"></i><i class="c" id="barc"></i></div>
+          <div class="leg"><span><b class="dot a"></b>Available <strong id="lga">0</strong></span><span><b class="dot b"></b>Borrowed <strong id="lgb">0</strong></span><span><b class="dot c"></b>Damaged <strong id="lgc">0</strong></span></div></div></div>
+        <div class="pane"><div class="ph"><h3>Quick actions</h3></div><div class="qa">
+          <button class="btn p" data-go="borrow" data-do="btnborrow">Borrow item</button>
+          <button class="btn o" data-go="borrow" data-do="btnreturn">Return item</button>
+          <button class="btn o" data-go="att" data-do="btntin">Time in</button>
+          <button class="btn o" data-go="att" data-do="btntout">Time out</button>
+          <button class="btn o admin" data-go="equip" data-do="btnaddeq">Add equipment</button></div></div>
+      </div>
+      <div class="pane only-stu"><div class="ph"><h3>My borrowed items</h3></div><div class="tw"><table><thead><tr><th>Item</th><th>Borrowed</th><th>Purpose</th><th></th></tr></thead><tbody id="mybody"></tbody></table></div></div>
+      <div class="dgrid">
+        <div class="pane"><div class="ph"><h3>Recent activity</h3></div><div class="pb" id="recent"></div></div>
+        <div class="pane"><div class="ph"><h3>Today's attendance</h3></div><div class="pb" id="attnow"></div></div>
+      </div>
+    </div>
+
+    <div class="view" id="v-equip">
+      <div class="tbar"><input id="eqsearch" placeholder="Search control number or name"><select id="eqstatus"><option value="">All Status</option><option>Available</option><option>Borrowed</option><option>Damaged</option></select><button class="btn p admin" id="btnaddeq">+ Add Equipment</button></div>
+      <div class="pane"><div class="tw"><table><thead><tr><th>Asset/Control No.</th><th>Category</th><th>Brand</th><th>Condition</th><th>Status</th><th>Actions</th></tr></thead><tbody id="eqbody"></tbody></table></div></div>
+    </div>
+
+    <div class="view" id="v-borrow">
+      <div class="tbar"><button class="btn p" id="btnborrow">+ Borrow Item</button><button class="btn s" id="btnreturn">Return Item</button></div>
+      <div class="pane"><div class="tw"><table><thead><tr><th>Asset/Control No.</th><th>Borrower</th><th>Purpose</th><th>Out</th><th>Status</th></tr></thead><tbody id="txbody"></tbody></table></div></div>
+    </div>
+
+    <div class="view" id="v-att">
+      <div class="tbar"><button class="btn p" id="btntin">Time In</button><button class="btn s" id="btntout">Time Out</button></div>
+      <div class="pane"><div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>In</th><th>Out</th></tr></thead><tbody id="attbody"></tbody></table></div></div>
+    </div>
+
+    <div class="view" id="v-users">
+      <div class="pane"><div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Lab</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usbody"></tbody></table></div></div>
+    </div>
+
+    <div class="view" id="v-logs">
+      <div class="pane"><div class="tw"><table><thead><tr><th>Time</th><th>Action</th><th>Details</th><th>User</th></tr></thead><tbody id="logbody"></tbody></table></div></div>
+    </div>
+
+    <div class="view" id="v-settings">
+      <div class="pane" style="padding:18px"><h3 style="margin-top:0;padding:0">Account</h3>
+        <p><strong>Identifier:</strong> <span id="setid"></span></p>
+        <p><strong>Name:</strong> <span id="setname"></span></p>
+        <p><strong>Role:</strong> <span id="setrole"></span></p>
+        <p><strong>Lab Access:</strong> <span id="setlab"></span></p>
+      </div>
+      <div class="pane" style="padding:18px"><h3 style="margin-top:0;padding:0">Storage</h3>
+        <p class="sl">LABME is fully client-side: all data (equipment, users, borrow records, attendance, logs) is saved in this browser's local storage. It is not shared with other devices, and clearing browser data will erase it.</p>
+        <button class="btn d admin" id="btnreset">Reset All Demo Data</button>
+      </div>
+    </div>
+  </main>
+</section>
+
+<div class="mbg" id="mbg">
+  <div class="modal" id="m-conf"><div class="mh"><h3 id="cftitle">Are you sure?</h3></div><p id="cftext" class="sl" style="margin:0"></p><div class="mact"><button type="button" class="btn o cx">Cancel</button><button type="button" class="btn d" id="cfok">Confirm</button></div></div>
+  <div class="modal" id="m-eq">
+    <div class="mh"><h3 id="eqtitle">Add Equipment</h3><button class="cx">&times;</button></div>
+    <form id="feq">
+      <input type="hidden" id="eqid">
+      <label>Laboratory</label><select id="eqlab"><option>Computer Laboratory</option><option>HE Laboratory</option></select>
+      <label>Asset / Control Number</label>
+      <div class="cnfield"><input id="eqcode"><button type="button" class="qrbtn" id="scaneq" aria-label="Scan QR/barcode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01"/></svg>
+      </button></div>
+      <label>Category</label><select id="eqcat"></select>
+      <div id="eqotherwrap" class="hidden reveal"><label>Equipment name</label><input id="eqother" placeholder="e.g. Document camera" maxlength="60"></div>
+      <label>Brand</label><select id="eqbrand"></select>
+      <label>Model</label><input id="eqmodel">
+      <label>Serial Number</label><input id="eqserial">
+      <label>Condition</label><select id="eqcond"><option>Good</option><option>Fair</option><option>Needs Repair</option><option>Damaged</option></select>
+      <label>Status</label><select id="eqstat"><option>Available</option><option>Borrowed</option><option>Damaged</option></select>
+      <label>Department</label><input id="eqloc" placeholder="e.g. Computer Science Dept.">
+      <label>Remarks</label><textarea id="eqrem" rows="2"></textarea>
+
+      <div class="mact"><button type="button" class="btn o cx">Cancel</button><button class="btn p" type="submit">Save</button></div>
+    </form>
+  </div>
+  <div class="modal" id="m-view">
+    <div class="mh"><h3>Equipment Details</h3><button class="cx">&times;</button></div>
+    <div id="viewbody" style="font-size:.9rem"></div>
+    <div class="mact"><button class="btn o" id="btnviewqr">View QR</button><button class="btn s" id="btnprintqr">Print QR</button><button class="btn p cx">Close</button></div>
+  </div>
+  <div class="modal" id="m-qr">
+    <div class="mh"><h3>Equipment QR Code</h3><button class="cx">&times;</button></div>
+    <div style="text-align:center"><div id="qrbox" style="display:inline-block;padding:14px;background:#fff;border:1px solid var(--bd);border-radius:9px"></div><p id="qrtext" style="font-size:.78rem;color:var(--muted);word-break:break-all;margin-top:8px"></p></div>
+    <div class="mact"><button class="btn s" id="btnprintqr2">Print</button><button class="btn p cx">Close</button></div>
+  </div>
+  <div class="modal" id="m-scan">
+    <button class="closeX" id="scanClose" aria-label="Close scanner">&times;</button>
+    <h3 style="margin:0 0 12px;color:var(--navy)">Scan QR Code / Barcode</h3>
+    <div id="reader" style="width:100%;border-radius:9px;overflow:hidden;background:#000;min-height:240px"></div>
+    <p id="scanstatus" style="font-size:.8rem;color:var(--muted);margin-top:10px;text-align:center;min-height:16px">Requesting camera access…</p>
+    <div class="sact"><button type="button" class="btn o" id="scanRetry">Restart camera</button><button type="button" class="btn p" id="scanPhoto">Scan from photo</button><button type="button" class="btn o hidden" id="scanOpenTab">Open in new tab</button></div>
+    <input type="file" id="scanFile" accept="image/*" class="vh">
+  </div>
+  <div class="modal" id="m-bor">
+    <div class="mh"><h3>Borrow Item</h3><button class="cx">&times;</button></div>
+    <form id="fbor">
+      <label>Asset/Control Number</label>
+      <div class="cnfield"><input id="borcode" autocomplete="off"><button type="button" class="qrbtn" id="scanbor" aria-label="Scan QR/barcode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01"/></svg>
+      </button></div>
+      <div class="eqinfo" id="borinfo"></div>
+      <label>Borrower Employee Number/LRN</label><input id="borid">
+      <label>Borrower Name</label><input id="borname">
+      <label>Purpose</label><textarea id="borp" rows="2"></textarea>
+      <div class="mact"><button type="button" class="btn o cx">Cancel</button><button class="btn p" type="submit">Confirm</button></div>
+    </form>
+  </div>
+  <div class="modal" id="m-ret">
+    <div class="mh"><h3>Return Item</h3><button class="cx">&times;</button></div>
+    <form id="fret">
+      <label>Asset/Control Number</label>
+      <div class="cnfield"><input id="retcode" autocomplete="off"><button type="button" class="qrbtn" id="scanret" aria-label="Scan QR/barcode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01"/></svg>
+      </button></div>
+      <div class="eqinfo" id="retinfo"></div>
+      <label>Condition In</label><select id="retcond"><option>Good</option><option>Fair</option><option>Damaged</option></select>
+      <div class="mact"><button type="button" class="btn o cx">Cancel</button><button class="btn p" type="submit">Confirm</button></div>
+    </form>
+  </div>
+</div>
+
+
+<script src="lib/jsQR.min.js"></script>
+<script src="lib/html5-qrcode.min.js"></script>
+<script src="script.js"></script>
+<div class="credit">Made By: Chard, Anthony, Benedick, Steven</div>
+</body>
+</html>
